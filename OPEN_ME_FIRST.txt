@@ -1,0 +1,11 @@
+HOW TO OPEN NIVESH KAVACH
+=========================
+
+1. EXTRACT this zip first:
+   right-click nivesh-kavach.zip  ->  Extract All  ->  Extract.
+   (Do NOT double-click index.html while it is still inside the zip.)
+
+2. Open the extracted folder and double-click   index.html
+   It opens in Chrome or Edge. Click "Scam in English" to try it.
+
+index.html is one single file. It needs no internet and no installation.

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nivesh Kavach | Investment scam red-flag checker</title>
+<meta name="description" content="Privacy-first, offline scam red-flag checker for WhatsApp and SMS investment messages in English, Hindi and Marathi.">
+<style>
+  :root {
+    --bg: #0f1722; --card: #17212e; --field: #0e1520; --line: #2a3a4d;
+    --text: #e8eef6; --muted: #9fb0c3; --accent: #86bde6; --accent-ink: #0b1a28;
+    --low: #e6c04a; --med: #f0903c; --high: #ef5b5b; --none: #86bde6;
+    --fs: 100%;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: var(--fs); }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", "Nirmala UI", "Mangal", system-ui, -apple-system, "Noto Sans Devanagari", Roboto, Arial, sans-serif;
+    line-height: 1.5; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 18px 16px 40px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand h1 { font-size: 1.7rem; margin: 0; color: var(--accent); }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  .seg { display: inline-flex; border: 1px solid var(--accent); border-radius: 12px; overflow: hidden; }
+  .seg button { background: transparent; color: var(--accent); border: 0; padding: 12px 16px; font-size: 1rem; cursor: pointer; min-height: 48px; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+  .iconbtn { background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 12px; padding: 12px 14px; font-size: 1rem; cursor: pointer; min-height: 48px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; margin-top: 16px; }
+  .tagline { color: var(--muted); margin: 0 0 14px; }
+  label.lbl { display: block; font-weight: 600; margin-bottom: 8px; }
+  textarea { width: 100%; min-height: 170px; resize: vertical; background: var(--field); color: var(--text);
+    border: 1px solid var(--line); border-radius: 12px; padding: 14px; font: inherit; }
+  textarea:focus, button:focus-visible { outline: 3px solid #ffd479; outline-offset: 2px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
+  .btn { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 12px; padding: 13px 22px; font-weight: 700; font-size: 1rem; cursor: pointer; min-height: 48px; }
+  .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); font-weight: 600; }
+  .chip { background: transparent; color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 9px 14px; font-size: .95rem; cursor: pointer; min-height: 44px; }
+  .chip:hover { border-color: var(--accent); }
+  .samples-label { color: var(--muted); font-size: .95rem; margin-right: 2px; }
+  .hidden { display: none !important; }
+  .meterwrap { margin: 6px 0 4px; }
+  .meter { height: 16px; background: var(--field); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .meter > div { height: 100%; width: 0; background: var(--none); transition: width .5s ease; }
+  .lvl-low > div { background: var(--low); } .lvl-medium > div { background: var(--med); } .lvl-high > div { background: var(--high); }
+  .verdict { font-size: 1.35rem; font-weight: 700; margin: 10px 0 2px; }
+  .score { color: var(--muted); font-size: .95rem; }
+  .note { color: var(--muted); margin: 8px 0 0; }
+  h2 { font-size: 1.1rem; margin: 20px 0 8px; }
+  .flag { border: 1px solid var(--line); border-left: 6px solid var(--med); border-radius: 12px; padding: 12px 14px; margin: 10px 0; background: var(--field); }
+  .flag.w-hi { border-left-color: var(--high); }
+  .flag b { display: block; }
+  .flag p { margin: 4px 0 0; color: var(--muted); }
+  .flag small { display: block; margin-top: 6px; color: var(--accent); word-break: break-word; }
+  ol.steps { padding-left: 1.3rem; margin: 6px 0; } ol.steps li { margin: 8px 0; }
+  .family { white-space: pre-wrap; background: var(--field); border: 1px dashed var(--accent); border-radius: 12px; padding: 14px; }
+  .msg { color: #ffd479; margin-top: 10px; min-height: 1.2em; }
+  footer { margin-top: 22px; color: var(--muted); font-size: .92rem; }
+  footer p { margin: 6px 0; }
+  .noscript { background: #3a2a10; border: 1px solid #a9772a; padding: 12px; border-radius: 10px; margin-top: 14px; }
+  @media (max-width: 560px) { .brand h1 { font-size: 1.4rem; } .btn { flex: 1 1 auto; } }
+  @media (prefers-reduced-motion: reduce) { .meter > div { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" fill="#e9f2fb"/><path d="m8.2 12.2 2.6 2.6 5-5.4" fill="none" stroke="#f08a24" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h1 id="t-title">Nivesh Kavach</h1>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Language" id="langgrp">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="hi" aria-pressed="false">हिंदी</button>
+        <button type="button" data-lang="mr" aria-pressed="false">मराठी</button>
+      </div>
+      <button type="button" class="iconbtn" id="sizebtn" aria-label="Change text size">A+</button>
+    </div>
+  </header>
+
+  <noscript><div class="noscript">This tool needs JavaScript. Please enable it in your browser and reload the page.</div></noscript>
+
+  <section class="card" aria-labelledby="t-label">
+    <p class="tagline" id="t-tagline">Paste a suspicious investment message to see its warning signs. Your message never leaves this phone.</p>
+    <label class="lbl" for="msg" id="t-label">Suspicious WhatsApp / SMS message</label>
+    <textarea id="msg" placeholder="Paste the WhatsApp or SMS message here…" spellcheck="false"></textarea>
+    <div class="row">
+      <button type="button" class="btn" id="checkbtn">Check message</button>
+      <button type="button" class="btn ghost" id="clearbtn">Clear</button>
+    </div>
+    <div class="row" id="samples">
+      <span class="samples-label" id="t-samples">Try a sample:</span>
+      <button type="button" class="chip" data-sample="en" id="s-en">Scam in English</button>
+      <button type="button" class="chip" data-sample="hi" id="s-hi">हिंदी ठगी</button>
+      <button type="button" class="chip" data-sample="mr" id="s-mr">मराठी फसवणूक</button>
+      <button type="button" class="chip" data-sample="ok" id="s-ok">Normal reminder</button>
+    </div>
+    <div class="msg" id="emptymsg" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="card hidden" id="result" aria-live="polite">
+    <div class="meterwrap">
+      <div class="meter" id="meter" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="meterfill"></div></div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+    <div class="score" id="score"></div>
+    <p class="note" id="note"></p>
+
+    <div id="flagsbox">
+      <h2 id="t-flags">Warning signs found</h2>
+      <div id="flags"></div>
+      <h2 id="t-steps">What to do now</h2>
+      <ol class="steps" id="steps"></ol>
+      <h2 id="t-family">Message for your family group</h2>
+      <div class="family" id="family"></div>
+    </div>
+    <div class="row">
+      <button type="button" class="btn" id="listenbtn">Listen</button>
+      <button type="button" class="btn ghost" id="copybtn">Copy warning for family</button>
+    </div>
+    <div class="msg" id="actionmsg" role="status" aria-live="polite"></div>
+  </section>
+
+  <footer>
+    <p id="t-privacy">100% offline: your message is never sent anywhere.</p>
+    <p id="t-disclaimer">Educational red-flag checker only. It is not investment advice and cannot tell whether a message is genuine or fake.</p>
+  </footer>
+</div>
+
+<script>
+/* Nivesh Kavach - rule-based scam red-flag engine (EN / HI / MR)
+ * Runs fully offline. No network calls. No investment advice. Never says "safe".
+ * Works in the browser (window.NK) and in Node (module.exports) for tests.
+ * NOTE: patterns avoid the Devanagari nukta (U+093C); input text has it stripped first.
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.NK = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var LANGS = ['en', 'hi', 'mr'];
+
+  /* ---------- Detection rules (language-neutral patterns, all 3 languages inside) ---------- */
+  var RULES = [
+    { id: 'guaranteed', weight: 30, patterns: [
+      /guarantee|assured\s+(return|profit)|risk[\s-]?free|100\s*%\s*(profit|return|safe)|sure[\s-]?(shot|profit)|double\s+(your|the)\s+money/i,
+      /गारंटी|पक्का\s*(मुनाफा|फायदा|रिटर्न)|दोगुना/,
+      /हमी|खात्रीशीर|दुप्पट|निश्चित\s*(नफा|परतावा)/ ] },
+    { id: 'highreturn', weight: 25, patterns: [
+      /\d+(\.\d+)?\s*%\s*(daily|per\s*day|a\s*day|weekly|per\s*week|monthly|per\s*month|every\s*(day|week|month))/i,
+      /(daily|weekly|monthly)\s*(profit|income|returns?)|earn\s*(rs\.?|₹)?\s*[\d,]+\s*(daily|per\s*day|every\s*day)/i,
+      /रोज\s*[\d०-९]+\s*%|[\d०-९]+\s*%\s*(रोज|रोजाना|प्रतिदिन|हर\s*दिन)|रोज\s*(कमाएं|कमाओ|मुनाफा)|[\d०-९]+\s*गुना/,
+      /दररोज\s*[\d०-९]+|[\d०-९]+\s*%\s*दररोज|दरमहा\s*[\d०-९]+/ ] },
+    { id: 'insider', weight: 20, patterns: [
+      /insider|operator|sure[\s-]?shot|jackpot|multibagger|(stock|trading|sure|hot|vip)\s*tips?\b|inside\s*(info|news)/i,
+      /ऑपरेटर|इनसाइडर|टिप|जैकपॉट|अंदर\s*की\s*(खबर|जानकारी)|मल्टीबैगर/,
+      /आतली\s*(बातमी|माहिती)/ ] },
+    { id: 'regclaim', weight: 10, patterns: [
+      /sebi[\s-]*(registered|approved|certified|authori[sz]ed|reg)|rbi[\s-]*(approved|registered)/i,
+      /सेबी\s*(रजिस्टर्ड|पंजीकृत|मान्यता|से\s*मान्य)|सेबी.{0,20}नोंदणीकृत/ ] },
+    { id: 'group', weight: 12, patterns: [
+      /(join|click).{0,40}(whatsapp|telegram|group|channel)|whatsapp\s*group|telegram|vip\s*(group|channel)|wa\.me|chat\.whatsapp\.com|t\.me\//i,
+      /ग्रुप.{0,15}(जॉइन|जुड़)|टेलीग्राम|टेलिग्राम/,
+      /जॉइन\s*करा|ग्रुपमध्ये/ ] },
+    { id: 'sensitive', weight: 30, patterns: [
+      /\botp\b|\bpin\b|\bcvv\b|password|aadhaar|aadhar|\bpan\s*(card|number)|net\s*banking/i,
+      /ओटीपी|पिन|पासवर्ड|आधार|पैन\s*(कार्ड|नंबर)|सीवीवी/ ] },
+    { id: 'payment', weight: 25, patterns: [
+      /\b(send|transfer|pay|deposit)\b.{0,40}(upi|account|₹|rs\.?|rupees|inr|\d{3,})|upi\s*(id|:)|[a-z0-9.\-_]+@(ybl|okaxis|okhdfcbank|oksbi|paytm|ibl|axl|upi|apl)\b|registration\s*fee|joining\s*fee|processing\s*fee|security\s*deposit/i,
+      /पैसे\s*(भेजें|भेजो|ट्रांसफर|जमा)|रजिस्ट्रेशन\s*फीस|यूपीआई/,
+      /पैसे\s*पाठवा|नोंदणी\s*शुल्क|रक्कम\s*(पाठवा|जमा)/ ] },
+    { id: 'app', weight: 20, patterns: [
+      /\.apk\b|download.{0,30}(app|apk)|install.{0,20}app|app\s*download/i,
+      /ऐप\s*(डाउनलोड|इंस्टॉल)|एपीके/,
+      /अॅप\s*(डाउनलोड|इन्स्टॉल)|एपीके/ ] },
+    { id: 'secret', weight: 15, patterns: [
+      /(don'?t|do\s*not|never)\s*(tell|share|inform).{0,20}(anyone|family|others)|keep\s*(it\s*)?(secret|confidential)|confidential/i,
+      /किसी\s*को\s*(न|मत|ना)\s*बता|गुप्त|गोपनीय/,
+      /कोणाला\s*(सांगू|सांगु)\s*नका|गुपित/ ] },
+    { id: 'urgency', weight: 12, patterns: [
+      /limited\s*(seats|slots|time|spots)|last\s*(chance|date)|today\s*only|hurry|act\s*now|only\s*\d+\s*(seats|slots|spots)|slots?\s*left|expires?\s*(today|soon|in)|join\s*today/i,
+      /आज\s*ही|आखिरी\s*(मौका|दिन)|सीमित\s*(सीट|स्थान)|जल्दी/,
+      /आजच|शेवटची\s*संधी|मर्यादित|लगेच/ ] },
+    { id: 'kyc', weight: 18, patterns: [
+      /kyc\s*(update|pending|expired|verification)|account\s*(will\s*be\s*)?(blocked|suspended|frozen|closed)|(blocked|suspended|frozen)\s*account/i,
+      /केवाईसी|केवायसी|खाता\s*(बंद|ब्लॉक)|अकाउंट\s*(बंद|ब्लॉक)|खाते\s*(बंद|ब्लॉक)/ ] },
+    { id: 'withdraw', weight: 25, patterns: [
+      /(withdraw(al)?|profit).{0,40}(fee|tax|charge|deposit)|(fee|tax|charge).{0,40}withdraw/i,
+      /निकालने.{0,25}(फीस|शुल्क|टैक्स)|विड्रॉल.{0,20}(फीस|शुल्क|टैक्स)/,
+      /काढण्या.{0,25}(फी|शुल्क|कर)/ ] },
+    { id: 'shortlink', weight: 12, patterns: [
+      /bit\.ly|tinyurl|cutt\.ly|rb\.gy|\bt\.co\/|is\.gd|shorturl|goo\.gl/i ] },
+    { id: 'authority', weight: 8, patterns: [
+      /\bai[\s-]*(trading|bot|powered|based|signals?)\b|(stock|market)\s*(guru|mentor)|professor|\bmentor\b/i,
+      /एआई\s*ट्रेडिंग|एआय\s*ट्रेडिंग|मेंटर|मेंटॉर|प्रोफेसर|गुरु/ ] }
+  ];
+
+  /* ---------- Text (EN / HI / MR) ---------- */
+  var FLAG_TEXT = {
+    guaranteed: {
+      en: ['Promises guaranteed or risk-free returns', 'Real investments always carry risk. No one can honestly guarantee profit.'],
+      hi: ['गारंटीड या जोखिम-मुक्त मुनाफे का वादा', 'असली निवेश में हमेशा जोखिम होता है। कोई भी ईमानदारी से मुनाफे की गारंटी नहीं दे सकता।'],
+      mr: ['हमी किंवा जोखीममुक्त नफ्याचे आश्वासन', 'खऱ्या गुंतवणुकीत नेहमी जोखीम असते. कोणीही प्रामाणिकपणे नफ्याची हमी देऊ शकत नाही.'] },
+    highreturn: {
+      en: ['Unrealistically high returns', 'A fixed daily or monthly percentage income is a classic scam hook.'],
+      hi: ['अवास्तविक रूप से ज़्यादा रिटर्न', 'रोज़ या हर महीने तय प्रतिशत की कमाई ठगी का पुराना तरीका है।'],
+      mr: ['अवास्तव जास्त परतावा', 'दररोज किंवा दरमहा ठरलेल्या टक्केवारीची कमाई ही फसवणुकीची जुनी युक्ती आहे.'] },
+    insider: {
+      en: ["'Insider', 'operator' or 'sure-shot' tips", "Genuine advisers do not offer secret inside information or 'sure-shot' calls."],
+      hi: ["'इनसाइडर', 'ऑपरेटर' या 'पक्की' टिप", "असली सलाहकार गुप्त अंदरूनी जानकारी या 'पक्की' कॉल नहीं बेचते।"],
+      mr: ["'इनसाइडर', 'ऑपरेटर' किंवा 'खात्रीशीर' टिप", "खरे सल्लागार गुप्त आतली माहिती किंवा 'खात्रीशीर' कॉल विकत नाहीत."] },
+    regclaim: {
+      en: ['Claims to be regulator-registered', 'Scammers often misuse SEBI/RBI names. Verify on the official website yourself; do not trust the message.'],
+      hi: ['नियामक से पंजीकृत होने का दावा', 'ठग अक्सर SEBI/RBI का नाम इस्तेमाल करते हैं। आधिकारिक वेबसाइट पर खुद जाँचें; संदेश पर भरोसा न करें।'],
+      mr: ['नियामककडे नोंदणीकृत असल्याचा दावा', 'फसवणूक करणारे अनेकदा SEBI/RBI चे नाव वापरतात. अधिकृत वेबसाइटवर स्वतः तपासा; संदेशावर विश्वास ठेवू नका.'] },
+    group: {
+      en: ['Pushes you into a WhatsApp / Telegram group', "Fake 'VIP' groups use fake members and fake profit screenshots to build trust."],
+      hi: ['WhatsApp / Telegram ग्रुप में जोड़ने का दबाव', "नकली 'VIP' ग्रुप में नकली सदस्य और नकली मुनाफे के स्क्रीनशॉट दिखाकर भरोसा बनाया जाता है।"],
+      mr: ['WhatsApp / Telegram ग्रुपमध्ये सामील होण्याचा आग्रह', "बनावट 'VIP' ग्रुपमध्ये बनावट सदस्य आणि नफ्याचे बनावट स्क्रीनशॉट दाखवून विश्वास मिळवला जातो."] },
+    sensitive: {
+      en: ['Asks for OTP, PIN, password or ID details', 'No genuine organisation asks for these. Sharing them lets a stranger empty your account.'],
+      hi: ['OTP, PIN, पासवर्ड या पहचान-पत्र की जानकारी मांगता है', 'कोई असली संस्था ये नहीं मांगती। इन्हें देने पर अजनबी आपका खाता खाली कर सकता है।'],
+      mr: ['OTP, PIN, पासवर्ड किंवा ओळखपत्र माहिती मागतो', 'कोणतीही खरी संस्था हे मागत नाही. हे दिल्यास अनोळखी व्यक्ती तुमचे खाते रिकामे करू शकते.'] },
+    payment: {
+      en: ['Asks you to send money or pay a fee', "Requests for 'registration', 'joining' or 'processing' fees to a personal account are a common trap."],
+      hi: ['पैसे भेजने या फीस भरने को कहता है', "व्यक्तिगत खाते में 'रजिस्ट्रेशन', 'जॉइनिंग' या 'प्रोसेसिंग' फीस मांगना आम जाल है।"],
+      mr: ['पैसे पाठवण्यास किंवा फी भरण्यास सांगतो', "वैयक्तिक खात्यात 'नोंदणी', 'जॉइनिंग' किंवा 'प्रोसेसिंग' फी मागणे हा नेहमीचा सापळा आहे."] },
+    app: {
+      en: ['Asks you to install an app or APK', 'Fake trading apps show made-up profits. APK files sent in messages can also steal your data.'],
+      hi: ['ऐप या APK इंस्टॉल करने को कहता है', 'नकली ट्रेडिंग ऐप बनावटी मुनाफा दिखाते हैं। संदेश से आई APK फ़ाइल आपका डेटा भी चुरा सकती है।'],
+      mr: ['अॅप किंवा APK इन्स्टॉल करण्यास सांगतो', 'बनावट ट्रेडिंग अॅप खोटा नफा दाखवतात. संदेशातून आलेली APK फाइल तुमचा डेटाही चोरू शकते.'] },
+    secret: {
+      en: ['Asks you to keep it secret', 'Scammers isolate you so your family cannot warn you.'],
+      hi: ['इसे गुप्त रखने को कहता है', 'ठग आपको अकेला कर देते हैं ताकि परिवार आपको सावधान न कर सके।'],
+      mr: ['हे गुप्त ठेवण्यास सांगतो', 'फसवणूक करणारे तुम्हाला एकटे पाडतात, म्हणजे कुटुंब तुम्हाला सावध करू शकणार नाही.'] },
+    urgency: {
+      en: ['Creates urgency', "Pressure to act 'today' or before slots 'run out' stops you from thinking and checking."],
+      hi: ['जल्दबाज़ी का दबाव बनाता है', "'आज ही' या 'सीटें खत्म' जैसे दबाव से आप सोच और जाँच नहीं पाते।"],
+      mr: ['घाई करण्याचा दबाव आणतो', "'आजच' किंवा 'जागा संपत आहेत' अशा दबावामुळे तुम्हाला विचार करून तपासता येत नाही."] },
+    kyc: {
+      en: ['Threatens account block / KYC problem', "Fake 'KYC update' or 'account suspended' messages are used to steal logins. Contact your bank through its official app or branch."],
+      hi: ['खाता बंद होने / KYC की धमकी', "नकली 'KYC अपडेट' या 'खाता बंद' संदेश लॉगिन चुराने के लिए होते हैं। अपने बैंक से आधिकारिक ऐप या शाखा के ज़रिए संपर्क करें।"],
+      mr: ['खाते बंद होण्याची / KYC ची धमकी', "बनावट 'KYC अपडेट' किंवा 'खाते बंद' संदेश लॉगिन चोरण्यासाठी असतात. तुमच्या बँकेशी अधिकृत अॅप किंवा शाखेमार्फत संपर्क साधा."] },
+    withdraw: {
+      en: ['Fee or tax demanded before you can withdraw', 'Genuine platforms do not make you pay more to take out your own money.'],
+      hi: ['पैसे निकालने से पहले फीस या टैक्स की मांग', 'असली प्लेटफ़ॉर्म आपका अपना पैसा निकालने के लिए और पैसे नहीं मांगते।'],
+      mr: ['पैसे काढण्यापूर्वी फी किंवा कराची मागणी', 'खरे प्लॅटफॉर्म तुमचेच पैसे काढण्यासाठी आणखी पैसे मागत नाहीत.'] },
+    shortlink: {
+      en: ['Uses a shortened or hidden link', 'Short links hide the real website. Never open them from unknown senders.'],
+      hi: ['छोटा या छिपा हुआ लिंक', 'छोटे लिंक असली वेबसाइट छिपा देते हैं। अनजान भेजने वाले के लिंक कभी न खोलें।'],
+      mr: ['छोटी किंवा लपवलेली लिंक', 'छोट्या लिंक खरी वेबसाइट लपवतात. अनोळखी पाठवणाऱ्याच्या लिंक कधीही उघडू नका.'] },
+    authority: {
+      en: ["Leans on 'AI', 'mentor' or 'professor' authority", "Impressive titles and 'AI trading' claims are used to look trustworthy; they prove nothing."],
+      hi: ["'AI', 'मेंटर' या 'प्रोफेसर' के नाम का सहारा", "बड़े नाम और 'AI ट्रेडिंग' के दावे भरोसा दिखाने के लिए होते हैं; इनसे कुछ साबित नहीं होता।"],
+      mr: ["'AI', 'मेंटर' किंवा 'प्रोफेसर' या नावांचा आधार", "मोठी पदे आणि 'AI ट्रेडिंग' चे दावे विश्वास निर्माण करण्यासाठी असतात; त्यातून काही सिद्ध होत नाही."] }
+  };
+
+  var UI = {
+    en: {
+      title: 'Nivesh Kavach',
+      tagline: 'Paste a suspicious investment message to see its warning signs. Your message never leaves this phone.',
+      label: 'Suspicious WhatsApp / SMS message',
+      placeholder: 'Paste the WhatsApp or SMS message here…',
+      check: 'Check message', clear: 'Clear',
+      samplesLabel: 'Try a sample:',
+      s_en: 'Scam in English', s_hi: 'हिंदी ठगी', s_mr: 'मराठी फसवणूक', s_ok: 'Normal reminder',
+      listen: 'Listen', stop: 'Stop',
+      copy: 'Copy warning for family', copied: 'Copied ✓',
+      riskScore: 'Warning score',
+      level: { none: 'No common red flags matched', low: 'Some warning signs', medium: 'Many warning signs', high: 'Very high risk. Stop.' },
+      noneNote: 'This does not mean the message can be trusted. Scammers keep changing their words. Ask a family member before sending any money.',
+      flagsHeading: 'Warning signs found', stepsHeading: 'What to do now', familyHeading: 'Message for your family group',
+      matched: 'In the message:',
+      privacy: '100% offline: your message is never sent anywhere.',
+      disclaimer: 'Educational red-flag checker only. It is not investment advice and cannot tell whether a message is genuine or fake.',
+      empty: 'Please paste a message first.',
+      novoice: 'No voice for this language was found on this device. Try the Edge browser, or add a voice in your device settings.',
+      textSize: 'Change text size', langLabel: 'Language',
+      steps: [
+        'Do not reply, click links, install apps or share your OTP, PIN or passwords.',
+        "Do not send any money, not even a small 'registration' fee.",
+        "Check any adviser or broker yourself on SEBI's official website (sebi.gov.in). Type the address yourself; do not use links from the message.",
+        'Show this to a family member. If you already paid or shared details, call 1930 (cyber fraud helpline) at once and report at cybercrime.gov.in.'
+      ],
+      family: '⚠️ Scam warning: a message I received shows these red flags: {list}. Please do not reply, click links, send money or share OTP/PIN. If in doubt, ask me first. Cyber fraud helpline: 1930.'
+    },
+    hi: {
+      title: 'निवेश कवच',
+      tagline: 'संदिग्ध निवेश संदेश चिपकाएं और चेतावनी के संकेत देखें। आपका संदेश इस फ़ोन से बाहर नहीं जाता।',
+      label: 'संदिग्ध WhatsApp / SMS संदेश',
+      placeholder: 'यहाँ WhatsApp या SMS संदेश चिपकाएं…',
+      check: 'जाँचें', clear: 'साफ़ करें',
+      samplesLabel: 'नमूना आज़माएं:',
+      s_en: 'Scam in English', s_hi: 'हिंदी ठगी', s_mr: 'मराठी फसवणूक', s_ok: 'सामान्य रिमाइंडर',
+      listen: 'सुनें', stop: 'रोकें',
+      copy: 'परिवार के लिए चेतावनी कॉपी करें', copied: 'कॉपी हो गया ✓',
+      riskScore: 'चेतावनी स्कोर',
+      level: { none: 'कोई आम चेतावनी संकेत नहीं मिला', low: 'कुछ चेतावनी संकेत', medium: 'कई चेतावनी संकेत', high: 'बहुत ज़्यादा जोखिम। रुकें।' },
+      noneNote: 'इसका मतलब यह नहीं कि संदेश पर भरोसा किया जा सकता है। ठग शब्द बदलते रहते हैं। पैसे भेजने से पहले परिवार से पूछें।',
+      flagsHeading: 'मिले चेतावनी संकेत', stepsHeading: 'अब क्या करें', familyHeading: 'परिवार के ग्रुप के लिए संदेश',
+      matched: 'संदेश में:',
+      privacy: '100% ऑफ़लाइन: आपका संदेश कहीं नहीं भेजा जाता।',
+      disclaimer: 'यह केवल शैक्षिक चेतावनी-जाँच है। यह निवेश सलाह नहीं है और यह नहीं बता सकता कि कोई संदेश असली है या नकली।',
+      empty: 'पहले संदेश चिपकाएं।',
+      novoice: 'इस डिवाइस पर इस भाषा की आवाज़ नहीं मिली। Edge ब्राउज़र आज़माएं या डिवाइस सेटिंग में आवाज़ जोड़ें।',
+      textSize: 'अक्षर का आकार बदलें', langLabel: 'भाषा',
+      steps: [
+        'जवाब न दें, लिंक पर क्लिक न करें, ऐप इंस्टॉल न करें, और OTP, PIN या पासवर्ड कभी साझा न करें।',
+        "कोई पैसा न भेजें, छोटी 'रजिस्ट्रेशन फीस' भी नहीं।",
+        'किसी भी सलाहकार या ब्रोकर को SEBI की आधिकारिक वेबसाइट (sebi.gov.in) पर खुद जाँचें। पता खुद टाइप करें; संदेश के लिंक का उपयोग न करें।',
+        'यह परिवार के किसी सदस्य को दिखाएं। अगर आप पैसे भेज चुके हैं या जानकारी दे चुके हैं, तो तुरंत 1930 (साइबर ठगी हेल्पलाइन) पर कॉल करें और cybercrime.gov.in पर शिकायत करें।'
+      ],
+      family: '⚠️ ठगी से सावधान: मुझे जो संदेश मिला उसमें ये चेतावनी संकेत हैं: {list}। कृपया जवाब न दें, लिंक न खोलें, पैसे न भेजें और OTP/PIN साझा न करें। शक हो तो पहले मुझसे पूछें। साइबर ठगी हेल्पलाइन: 1930।'
+    },
+    mr: {
+      title: 'निवेश कवच',
+      tagline: 'संशयास्पद गुंतवणूक संदेश चिकटवा आणि धोक्याची चिन्हे पहा. तुमचा संदेश या फोनबाहेर जात नाही.',
+      label: 'संशयास्पद WhatsApp / SMS संदेश',
+      placeholder: 'इथे WhatsApp किंवा SMS संदेश चिकटवा…',
+      check: 'तपासा', clear: 'पुसा',
+      samplesLabel: 'नमुना वापरून पहा:',
+      s_en: 'Scam in English', s_hi: 'हिंदी ठगी', s_mr: 'मराठी फसवणूक', s_ok: 'सामान्य रिमाइंडर',
+      listen: 'ऐका', stop: 'थांबवा',
+      copy: 'कुटुंबासाठी इशारा कॉपी करा', copied: 'कॉपी झाले ✓',
+      riskScore: 'धोका गुण',
+      level: { none: 'सामान्य धोक्याची चिन्हे आढळली नाहीत', low: 'काही धोक्याची चिन्हे', medium: 'अनेक धोक्याची चिन्हे', high: 'खूप जास्त धोका. थांबा.' },
+      noneNote: 'याचा अर्थ संदेशावर विश्वास ठेवता येतो असा नाही. फसवणूक करणारे शब्द बदलत राहतात. पैसे पाठवण्यापूर्वी कुटुंबाला विचारा.',
+      flagsHeading: 'आढळलेली धोक्याची चिन्हे', stepsHeading: 'आता काय करावे', familyHeading: 'कुटुंबाच्या ग्रुपसाठी संदेश',
+      matched: 'संदेशात:',
+      privacy: '१००% ऑफलाइन: तुमचा संदेश कुठेही पाठवला जात नाही.',
+      disclaimer: 'ही फक्त शैक्षणिक धोका-तपासणी आहे. ही गुंतवणूक सल्ला नाही आणि संदेश खरा की खोटा हे सांगू शकत नाही.',
+      empty: 'आधी संदेश चिकटवा.',
+      novoice: 'या डिव्हाइसवर या भाषेचा आवाज सापडला नाही. Edge ब्राउझर वापरून पहा किंवा डिव्हाइस सेटिंग्जमध्ये आवाज जोडा.',
+      textSize: 'अक्षराचा आकार बदला', langLabel: 'भाषा',
+      steps: [
+        'उत्तर देऊ नका, लिंकवर क्लिक करू नका, अॅप इन्स्टॉल करू नका आणि OTP, PIN किंवा पासवर्ड कधीही शेअर करू नका.',
+        "कोणतेही पैसे पाठवू नका, लहानशी 'नोंदणी फी' सुद्धा नाही.",
+        'कोणताही सल्लागार किंवा ब्रोकर SEBI च्या अधिकृत वेबसाइटवर (sebi.gov.in) स्वतः तपासा. पत्ता स्वतः टाइप करा; संदेशातील लिंक वापरू नका.',
+        'हे कुटुंबातील एखाद्या व्यक्तीला दाखवा. तुम्ही आधीच पैसे पाठवले असतील किंवा माहिती दिली असेल, तर लगेच 1930 (सायबर फसवणूक हेल्पलाइन) वर कॉल करा आणि cybercrime.gov.in वर तक्रार करा.'
+      ],
+      family: '⚠️ फसवणुकीपासून सावध: मला मिळालेल्या संदेशात ही धोक्याची चिन्हे आहेत: {list}. कृपया उत्तर देऊ नका, लिंक उघडू नका, पैसे पाठवू नका आणि OTP/PIN शेअर करू नका. शंका असल्यास आधी मला विचारा. सायबर फसवणूक हेल्पलाइन: 1930.'
+    }
+  };
+
+  var SAMPLES = {
+    en: "Congratulations! Join our VIP WhatsApp group for sure-shot stock tips from our SEBI registered expert. Earn 5% daily, guaranteed profit! Only 10 slots left, join today: bit.ly/xyz123. Pay Rs 2000 registration fee to UPI ID trader@ybl. Don't tell anyone.",
+    hi: 'बधाई हो! हमारे SEBI रजिस्टर्ड एक्सपर्ट की पक्की टिप से रोज 5% कमाएं। गारंटीड मुनाफा! आज ही WhatsApp ग्रुप जॉइन करें: bit.ly/abc123 । रजिस्ट्रेशन फीस सिर्फ ₹2,000 UPI पर भेजें। किसी को न बताएं।',
+    mr: 'अभिनंदन! आमच्या ऑपरेटर कडून खात्रीशीर टिप घ्या. दररोज ५% नफा, १००% हमी! आजच टेलीग्राम ग्रुप जॉइन करा. नोंदणी शुल्क ₹२,००० UPI वर पाठवा. कोणाला सांगू नका.',
+    ok: 'Your SIP of Rs 5,000 for April has been processed successfully. Please check your statement in the official app. Mutual fund investments are subject to market risks; read all scheme related documents carefully.'
+  };
+
+  /* ---------- Engine ---------- */
+  function normalise(text) {
+    return String(text == null ? '' : text).normalize('NFC').replace(/़/g, '');
+  }
+
+  function levelFor(score, count) {
+    if (count === 0) return 'none';
+    if (score < 20) return 'low';
+    if (score < 45) return 'medium';
+    return 'high';
+  }
+
+  function analyze(text, lang) {
+    if (LANGS.indexOf(lang) < 0) lang = 'en';
+    var t = normalise(text);
+    var flags = [];
+    var score = 0;
+    RULES.forEach(function (rule) {
+      var hit = null;
+      for (var i = 0; i < rule.patterns.length && !hit; i++) {
+        var m = rule.patterns[i].exec(t);
+        if (m) hit = m[0];
+      }
+      if (hit) {
+        var txt = FLAG_TEXT[rule.id][lang];
+        flags.push({
+          id: rule.id, weight: rule.weight,
+          title: txt[0], why: txt[1],
+          matched: hit.length > 40 ? hit.slice(0, 40) + '…' : hit
+        });
+        score += rule.weight;
+      }
+    });
+    flags.sort(function (a, b) { return b.weight - a.weight; });
+    score = Math.min(100, score);
+    var level = levelFor(score, flags.length);
+    var ui = UI[lang];
+    var family = '';
+    if (flags.length) {
+      var list = flags.slice(0, 4).map(function (f) { return f.title; }).join('; ');
+      family = ui.family.replace('{list}', list);
+    }
+    return {
+      lang: lang, score: score, level: level, flags: flags,
+      label: ui.level[level],
+      note: level === 'none' ? ui.noneNote : '',
+      steps: flags.length ? ui.steps.slice() : [],
+      family: family
+    };
+  }
+
+  /* Text that is read aloud by the Listen button */
+  function speechText(result) {
+    var parts = [result.label + '.'];
+    if (result.note) parts.push(result.note);
+    result.flags.forEach(function (f) { parts.push(f.title + '. ' + f.why); });
+    if (result.steps.length) parts.push(result.steps[0], result.steps[1]);
+    return parts.join(' ');
+  }
+
+  return { LANGS: LANGS, RULES: RULES, FLAG_TEXT: FLAG_TEXT, UI: UI, SAMPLES: SAMPLES,
+           analyze: analyze, speechText: speechText, normalise: normalise };
+});
+
+</script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var lang = 'en', speaking = false, last = null, sizeIdx = 0;
+  var SIZES = ['100%', '118%', '136%'];
+
+  try { var saved = localStorage.getItem('nk-lang'); if (saved && NK.LANGS.indexOf(saved) >= 0) lang = saved; } catch (e) {}
+
+  function setText(id, v) { var el = $(id); if (el) el.textContent = v; }
+
+  function applyLang() {
+    var u = NK.UI[lang];
+    document.documentElement.lang = lang === 'en' ? 'en' : (lang === 'hi' ? 'hi' : 'mr');
+    document.title = u.title + ' | ' + (lang === 'en' ? 'Investment scam red-flag checker' : u.tagline.split('.')[0]);
+    setText('t-title', u.title); setText('t-tagline', u.tagline); setText('t-label', u.label);
+    $('msg').placeholder = u.placeholder;
+    setText('checkbtn', u.check); setText('clearbtn', u.clear); setText('t-samples', u.samplesLabel);
+    setText('s-en', u.s_en); setText('s-hi', u.s_hi); setText('s-mr', u.s_mr); setText('s-ok', u.s_ok);
+    setText('t-flags', u.flagsHeading); setText('t-steps', u.stepsHeading); setText('t-family', u.familyHeading);
+    setText('copybtn', u.copy); setText('listenbtn', speaking ? u.stop : u.listen);
+    setText('t-privacy', u.privacy); setText('t-disclaimer', u.disclaimer);
+    $('sizebtn').setAttribute('aria-label', u.textSize);
+    $('langgrp').setAttribute('aria-label', u.langLabel);
+    var btns = document.querySelectorAll('#langgrp button');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-lang') === lang ? 'true' : 'false');
+    $('emptymsg').textContent = ''; $('actionmsg').textContent = '';
+    if (last) render(); /* re-render result in the newly chosen language */
+  }
+
+  function render() {
+    var text = $('msg').value;
+    last = NK.analyze(text, lang);
+    var u = NK.UI[lang], r = last;
+    $('result').classList.remove('hidden');
+    var meter = $('meter');
+    meter.className = 'meter lvl-' + r.level;
+    meter.setAttribute('aria-valuenow', r.score);
+    meter.setAttribute('aria-valuetext', r.label);
+    $('meterfill').style.width = Math.max(r.score, r.flags.length ? 6 : 2) + '%';
+    setText('verdict', r.label);
+    setText('score', u.riskScore + ': ' + r.score + ' / 100');
+    setText('note', r.note);
+    var has = r.flags.length > 0;
+    $('flagsbox').classList.toggle('hidden', !has);
+    $('copybtn').classList.toggle('hidden', !has);
+
+    var fl = $('flags'); fl.textContent = '';
+    r.flags.forEach(function (f) {
+      var d = document.createElement('div'); d.className = 'flag' + (f.weight >= 25 ? ' w-hi' : '');
+      var b = document.createElement('b'); b.textContent = f.title;
+      var p = document.createElement('p'); p.textContent = f.why;
+      var s = document.createElement('small'); s.textContent = u.matched + ' "' + f.matched + '"';
+      d.appendChild(b); d.appendChild(p); d.appendChild(s); fl.appendChild(d);
+    });
+    var st = $('steps'); st.textContent = '';
+    r.steps.forEach(function (x) { var li = document.createElement('li'); li.textContent = x; st.appendChild(li); });
+    setText('family', r.family);
+    $('actionmsg').textContent = '';
+  }
+
+  function check() {
+    var text = $('msg').value;
+    if (!text.trim()) { $('emptymsg').textContent = NK.UI[lang].empty; $('result').classList.add('hidden'); last = null; stopSpeech(); return; }
+    $('emptymsg').textContent = '';
+    stopSpeech();
+    render();
+    $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function stopSpeech() {
+    speaking = false;
+    try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+    setText('listenbtn', NK.UI[lang].listen);
+  }
+
+  function listen() {
+    if (!last) return;
+    if (speaking) { stopSpeech(); return; }
+    var u = NK.UI[lang];
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') { $('actionmsg').textContent = u.novoice; return; }
+    var code = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN' }[lang];
+    var utt = new SpeechSynthesisUtterance(NK.speechText(last));
+    utt.lang = code; utt.rate = 0.9;
+    var voices = window.speechSynthesis.getVoices() || [];
+    var match = null;
+    for (var i = 0; i < voices.length; i++) { if (voices[i].lang && voices[i].lang.toLowerCase().indexOf(lang) === 0) { match = voices[i]; break; } }
+    if (match) utt.voice = match; else if (lang !== 'en') $('actionmsg').textContent = u.novoice;
+    utt.onend = utt.onerror = function () { speaking = false; setText('listenbtn', NK.UI[lang].listen); };
+    speaking = true; setText('listenbtn', u.stop);
+    window.speechSynthesis.speak(utt);
+  }
+
+  function copyFamily() {
+    if (!last || !last.family) return;
+    var u = NK.UI[lang], txt = last.family;
+    function done() { $('actionmsg').textContent = u.copied; }
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = txt; ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { $('actionmsg').textContent = txt; }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(done, fallback); else fallback();
+  }
+
+  $('checkbtn').addEventListener('click', check);
+  $('clearbtn').addEventListener('click', function () { $('msg').value = ''; $('result').classList.add('hidden'); $('emptymsg').textContent = ''; last = null; stopSpeech(); $('msg').focus(); });
+  $('listenbtn').addEventListener('click', listen);
+  $('copybtn').addEventListener('click', copyFamily);
+  $('sizebtn').addEventListener('click', function () { sizeIdx = (sizeIdx + 1) % SIZES.length; document.documentElement.style.setProperty('--fs', SIZES[sizeIdx]); });
+  document.getElementById('samples').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-sample]') : null;
+    if (!b) return;
+    $('msg').value = NK.SAMPLES[b.getAttribute('data-sample')];
+    check();
+  });
+  document.getElementById('langgrp').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-lang]') : null;
+    if (!b) return;
+    lang = b.getAttribute('data-lang'); stopSpeech();
+    try { localStorage.setItem('nk-lang', lang); } catch (x) {}
+    applyLang();
+  });
+  $('msg').addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') check(); });
+
+  applyLang();
+})();
+</script>
+</body>
+</html>
