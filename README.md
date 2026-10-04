@@ -58,7 +58,7 @@ node build.js
 
 | Name | Role |
 |---|---|
-| YOUR NAME | e.g. Developer |
+| Pramukh Kasekar | e.g. Developer |
 
 ## License
 
