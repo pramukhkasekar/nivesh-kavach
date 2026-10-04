@@ -4,8 +4,7 @@
 
 Paste a suspicious message. Nivesh Kavach shows which scam warning signs it contains, explains each one in plain language, can read the result aloud, and creates a ready-made warning you can copy into a family group.
 
-- **Live demo:** https://YOUR-GITHUB-USERNAME.github.io/nivesh-kavach/
-- **Demo video:** PASTE-YOUR-VIDEO-LINK-HERE
+- **Live demo:** https://pramukhkasekar.github.io/nivesh-kavach/
 
 ## Quick start (no install, no internet needed)
 
